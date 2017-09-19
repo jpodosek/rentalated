@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<a href="/session/newForm">Login</a>
+<h1>Only ${{ apartment.rent }}</h1>
+<p>
+  {{ apartment.address }}<br>
+  {{ apartment.city }}, {{ apartment.state }} {{ apartment.zipCode }}
+</p>
+<dl>
+  <dt>Number of bedrooms</dt>
+  <dd>{{ apartment.numberOfBedrooms }}</dd>
+  <dt>Number of bathrooms</dt>
+  <dd>{{ apartment.numberOfBathrooms }}</dd>
+  <dt>Square footage</dt>
+  <dd>{{ apartment.squareFootage }}</dd>
+</dl>
+</body>
+</html>
