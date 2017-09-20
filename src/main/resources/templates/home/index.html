@@ -5,12 +5,8 @@
 <title>Home Page</title>
 </head>
 <body>
-	{{#noUser}}
-	<a href="/login">Login</a>
-	<a href="/signup">Sign Up</a> {{/noUser}} {{#error}} {{ . }}{{/error}}
-	{{#currentUser}}
-	<a href="/logout">Log out</a> Welcome,
-	{{currentUser.firstName}}({{currentUser.email}}) {{/currentUser}}
+	{{> /common/_navigation }}
+	
 	<h1>Apartments!</h1>
 	<a href="/apartments/new">List a New Apartment</a> {{#apartments}}
 	<div>
@@ -18,12 +14,12 @@
 	</div>
 	{{/apartments}}
 
-
 	<h1>Users</h1>
 	{{#users}}
 	<div>
 		<a href="/users/{{id}}">{{firstName}}{{lastName}}</a>
 	</div>
 	{{/users}}
+	 {{#error}} {{ . }}{{/error}}
 </body>
 </html>

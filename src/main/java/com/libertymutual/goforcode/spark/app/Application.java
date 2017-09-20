@@ -30,12 +30,19 @@ public class Application {
 
     	try (AutoCloseableDb db = new AutoCloseableDb()) {
 	    	User.deleteAll();
-	    	new User("jon@gmail.com", encryptedPassword, "Jon", "Podosek").saveIt();
-	    	
+	    	User user = new User("jon@gmail.com", encryptedPassword, "Jon", "Podosek"); 
+	    	user.saveIt();    	
 	    	Apartment.deleteAll();
-	    	new Apartment(2000, 1, 0, 700, "123 Main St", "San Fransisco", "CA", "95215").saveIt();
-	    	new Apartment(3000, 3, 2, 1500, "456 Fake St", "Seattle", "WA", "98036").saveIt();
+	    	Apartment apartment = new Apartment(2000, 1, 0, 700, "123 Main St", "San Fransisco", "CA", "95215");
+	    	user.add(apartment);
+	    	apartment.saveIt();
 	    	
+	    	user = new User("test@gmail.com", encryptedPassword, "test", "test"); 
+	    	user.saveIt();    	
+	    	Apartment.deleteAll();
+	    	apartment = new Apartment(2000, 1, 0, 700, "123 Main St", "San Fransisco", "CA", "95215");
+	    	user.add(apartment);
+	    	apartment.saveIt();
     	}
     	
     	get("/", HomeController.index); //
@@ -43,6 +50,9 @@ public class Application {
     	path("/apartments",  () -> {
 	    	before("/new", SecurityFilters.isAuthenticated);
 	    	get("/new", ApartmentController.newForm); //serve up form to create apartment
+	    	
+	    	before("/mine", SecurityFilters.isAuthenticated);	
+	    	get("/mine", ApartmentController.index);
 	    	
 	    	get("/:id", ApartmentController.details);
 	    	

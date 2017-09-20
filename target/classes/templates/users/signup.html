@@ -5,15 +5,16 @@
 <title>Sign-Up</title>
 </head>
 <body>
+{{> /common/_navigation }}
 <form method="post" action="/signup">
   Email:
   <input type="email" name="email"><br>
   Password:
   <input type="password" name="password"><br>
   First Name:
-  <input type="text" name="firstName"><br>
+  <input type="text" name="first_name"><br>
   Last Name:
-  <input type="text" name="lastName"><br>
+  <input type="text" name="last_name"><br>
   <button type="submit">Submit</button>
 </form>
 </body>

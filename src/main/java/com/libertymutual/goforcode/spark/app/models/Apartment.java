@@ -4,18 +4,18 @@ package com.libertymutual.goforcode.spark.app.models;
 import org.javalite.activejdbc.Model;
 
 public class Apartment extends Model {
-
+	public User user;
 	public Apartment() {}
 
-	public Apartment(int rent, int numberOfBedrooms, double numberOfBathrooms, int squareFootage, String address, String city, String state, String zipCode) {
+	public Apartment(int rent, int number_of_bedrooms, double number_of_bathrooms, int square_footage, String address, String city, String state, String zip_code) {
 		setRent(rent);
-		setNumberOfBedrooms(numberOfBedrooms);
-		setNumberOfBathrooms(numberOfBathrooms);
-		setSquareFootage(squareFootage);
+		setNumberOfBedrooms(number_of_bedrooms);
+		setNumberOfBathrooms(number_of_bathrooms);
+		setSquareFootage(square_footage);
 		setAddress(address);
 		setCity(city);
 		setState(state);
-		setZipCode(zipCode);
+		setZipCode(zip_code);
 	}
 
 	public int getRent() {
@@ -30,24 +30,24 @@ public class Apartment extends Model {
 		return getInteger("number_of_bedrooms");
 	}
 
-	public void setNumberOfBedrooms(int numberOfBedrooms) {
-		set("number_of_bedrooms", numberOfBedrooms);
+	public void setNumberOfBedrooms(int number_of_bedrooms) {
+		set("number_of_bedrooms", number_of_bedrooms);
 	}
 
 	public double getNumberOfBathrooms() {
 		return getDouble("number_of_bathrooms");
 	}
 
-	public void setNumberOfBathrooms(double numberOfBathrooms) {
-		set("number_of_bathrooms", numberOfBathrooms);
+	public void setNumberOfBathrooms(double number_of_bathrooms) {
+		set("number_of_bathrooms", number_of_bathrooms);
 	}
 
 	public int getSquareFootage() {
 		return getInteger("square_footage");
 	}
 
-	public void setSquareFootage(int squareFootage) {
-		set("square_footage", squareFootage);
+	public void setSquareFootage(int square_footage) {
+		set("square_footage", square_footage);
 	}
 
 	public String getAddress() {
@@ -78,8 +78,16 @@ public class Apartment extends Model {
 		return getString("zip_code");
 	}
 
-	public void setZipCode(String zipCode) {
-		set("zip_code", zipCode);
+	public void setZipCode(String zip_code) {
+		set("zip_code", zip_code);
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }

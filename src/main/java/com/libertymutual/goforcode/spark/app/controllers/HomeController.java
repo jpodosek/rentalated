@@ -27,8 +27,6 @@ public class HomeController {
 		//recently added so users display on home page
 		List<User> users = User.findAll();	
 		model.put("users", users);
-		
-		
 		model.put("currentUser", req.session().attribute("currentUser"));
 		model.put("noUser", req.session().attribute("currentUser") == null);		
 		//replace with something else - about 7 lines of code

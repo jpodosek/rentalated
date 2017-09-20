@@ -18,6 +18,8 @@ public class SessionController {
 	public static final Route newForm = (Request req, Response res) -> {
 		// Map<String, Object> model = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("currentUser", req.session().attribute("currentUser"));
+		model.put("noUser", req.session().attribute("currentUser") == null);	
 		model.put("returnPath", req.queryParams("returnPath"));
 		return MustacheRenderer.getInstance().render("session/login.html", model);
 	};

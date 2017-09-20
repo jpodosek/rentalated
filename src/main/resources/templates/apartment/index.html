@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Listing</title>
+</head>
+<body>
+{{> /common/_navigation }}
+	{{currentUser.firstName}}({{currentUser.email}}) 
+
+	<h1>My Apartment Listings</h1>
+	<a href="/apartments/new">List a New Apartment</a> 
+	{{#apartments}}
+	<div>
+		<a href="/apartments/{{id}}">{{address}}</a>
+	</div>
+	{{/apartments}}
+</body>
+</html>

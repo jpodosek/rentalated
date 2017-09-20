@@ -18,7 +18,10 @@ import spark.Route;
 public class UserController {
 	//get
 	public static final Route newForm = (Request req, Response res) -> {
-		return MustacheRenderer.getInstance().render("users/signup.html", null);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("currentUser", req.session().attribute("currentUser"));
+		model.put("noUser", req.session().attribute("currentUser") == null);	
+		return MustacheRenderer.getInstance().render("users/signup.html", model);
 	};
 		
 	//respond to post 
