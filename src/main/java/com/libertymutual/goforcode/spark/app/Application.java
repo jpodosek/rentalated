@@ -14,17 +14,21 @@ import com.libertymutual.goforcode.spark.app.controllers.HomeController;
 import com.libertymutual.goforcode.spark.app.controllers.SessionController;
 import com.libertymutual.goforcode.spark.app.controllers.UserApiController;
 import com.libertymutual.goforcode.spark.app.controllers.UserController;
+import com.libertymutual.goforcode.spark.app.filters.SecurityFilters;
 import com.libertymutual.goforcode.spark.app.models.Apartment;
 import com.libertymutual.goforcode.spark.app.models.User;
-import com.libertymutual.goforcode.spark.app.utilities.AutoClosableDb;
+import com.libertymutual.goforcode.spark.app.utilities.AutoCloseableDb;
 import com.libertymutual.goforcode.spark.app.utilities.MustacheRenderer;
+
+import spark.Request;
+import spark.Response;
 
 public class Application {
 
     public static void main(String[] args)  {    	
     	String encryptedPassword =  BCrypt.hashpw("password", BCrypt.gensalt());
 
-    	try (AutoClosableDb db = new AutoClosableDb()) {
+    	try (AutoCloseableDb db = new AutoCloseableDb()) {
 	    	User.deleteAll();
 	    	new User("jon@gmail.com", encryptedPassword, "Jon", "Podosek").saveIt();
 	    	
@@ -35,8 +39,18 @@ public class Application {
     	}
     	
     	get("/", HomeController.index); //
-    	get("/apartments/:id", ApartmentController.details);
-  
+    	
+    	path("/apartments",  () -> {
+	    	before("/new", SecurityFilters.isAuthenticated);
+	    	get("/new", ApartmentController.newForm); //serve up form to create apartment
+	    	
+	    	get("/:id", ApartmentController.details);
+	    	
+	    	before("", SecurityFilters.isAuthenticated);
+	    	post("", ApartmentController.create); //handle apartment create form post
+    	});
+    	
+    	
     	get("/login", SessionController.newForm);
     	post("/login", SessionController.create);
     	get("/logout", SessionController.logout);
@@ -45,15 +59,14 @@ public class Application {
     	get("/users/:id", UserController.details);
     	post("/signup", UserController.create);
     	
-    	
     	path("/api",  () -> {
         	get("/users/:id", UserApiController.details);
         	post("/users", UserApiController.create);
     	});
     	
     	path("/api",  () -> {
-    	get("/apartments/:id", ApartmentApiController.details);
-    	post("/apartments",ApartmentApiController.create);
+	    	get("/apartments/:id", ApartmentApiController.details);
+	    	post("/apartments",ApartmentApiController.create);
     	});
     	
     	

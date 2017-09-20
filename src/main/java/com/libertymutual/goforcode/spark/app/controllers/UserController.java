@@ -7,7 +7,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import com.libertymutual.goforcode.spark.app.models.Apartment;
 import com.libertymutual.goforcode.spark.app.models.User;
-import com.libertymutual.goforcode.spark.app.utilities.AutoClosableDb;
+import com.libertymutual.goforcode.spark.app.utilities.AutoCloseableDb;
 import com.libertymutual.goforcode.spark.app.utilities.JsonHelper;
 import com.libertymutual.goforcode.spark.app.utilities.MustacheRenderer;
 
@@ -30,7 +30,7 @@ public class UserController {
 		String lastName = req.queryParams("lastName");
 		User user = new User(email, password, firstName, lastName);
 		
-		try(AutoClosableDb db = new AutoClosableDb()){
+		try(AutoCloseableDb db = new AutoCloseableDb()){
 			user.saveIt();
 			req.session().attribute("currentUser", user);
 			res.redirect("/");
@@ -46,7 +46,7 @@ public class UserController {
 	public static final Route details = (Request req, Response res) -> {
 		int id = Integer.parseInt(req.params("id"));
 		
-		try (AutoClosableDb db = new AutoClosableDb()) {
+		try (AutoCloseableDb db = new AutoCloseableDb()) {
 		User user = User.findById(id);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("user", user);

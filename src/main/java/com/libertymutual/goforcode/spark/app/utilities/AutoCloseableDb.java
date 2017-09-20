@@ -4,15 +4,15 @@ import java.io.Closeable;
 
 import org.javalite.activejdbc.Base;
 
-public class AutoClosableDb implements Closeable, AutoCloseable {
+public class AutoCloseableDb implements Closeable, AutoCloseable {
 
-	public AutoClosableDb() {
+	public AutoCloseableDb() {
 			Base.open("org.postgresql.Driver", "jdbc:postgresql://localhost:5432/rental", "rental", "rental"); //get default connection to database
 	}
+	
 	@Override
 	public void close(){
-		Base.close();
-		
+		Base.close();	
 	}
 
 }

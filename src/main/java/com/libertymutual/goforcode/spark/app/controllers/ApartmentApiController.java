@@ -1,7 +1,7 @@
 package com.libertymutual.goforcode.spark.app.controllers;
 
 import com.libertymutual.goforcode.spark.app.models.Apartment;
-import com.libertymutual.goforcode.spark.app.utilities.AutoClosableDb;
+import com.libertymutual.goforcode.spark.app.utilities.AutoCloseableDb;
 import com.libertymutual.goforcode.spark.app.utilities.JsonHelper;
 
 import static spark.Spark.notFound;
@@ -13,7 +13,7 @@ public class ApartmentApiController {
 
 	public static final Route details = (Request req, Response res) -> {
 		
-		try (AutoClosableDb db = new AutoClosableDb()) {
+		try (AutoCloseableDb db = new AutoCloseableDb()) {
 			int idAsString = Integer.parseInt(req.params("id"));
 			Apartment apartment = Apartment.findById(idAsString);
 			if (apartment != null) {
@@ -31,7 +31,7 @@ public class ApartmentApiController {
 		String apartmentJson = req.body(); 
 		apartment.fromMap(JsonHelper.toMap(apartmentJson));
 
-		try(AutoClosableDb db = new AutoClosableDb()) {
+		try(AutoCloseableDb db = new AutoCloseableDb()) {
 			apartment.saveIt();
 			res.status(201);
 			return apartment.toJson(true);

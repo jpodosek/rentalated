@@ -5,7 +5,7 @@ import java.util.Map;
 import org.mindrot.jbcrypt.BCrypt;
 
 import com.libertymutual.goforcode.spark.app.models.User;
-import com.libertymutual.goforcode.spark.app.utilities.AutoClosableDb;
+import com.libertymutual.goforcode.spark.app.utilities.AutoCloseableDb;
 import com.libertymutual.goforcode.spark.app.utilities.MustacheRenderer;
 
 import spark.Request;
@@ -17,7 +17,9 @@ public class SessionController {
 	// show form via get
 	public static final Route newForm = (Request req, Response res) -> {
 		// Map<String, Object> model = new HashMap<String, Object>();
-		return MustacheRenderer.getInstance().render("session/login.html", null);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("returnPath", req.queryParams("returnPath"));
+		return MustacheRenderer.getInstance().render("session/login.html", model);
 	};
 
 	// post - user logs in and creates a session
@@ -26,7 +28,7 @@ public class SessionController {
 		String email = req.queryParams("email");
 		String password = req.queryParams("password");
 
-		try (AutoClosableDb db = new AutoClosableDb()) {
+		try (AutoCloseableDb db = new AutoCloseableDb()) {
 			// see if user entered in form matches user w/ same email in database
 			User user = User.findFirst("email = ?", email);
 			if (user != null && BCrypt.checkpw(password, user.getPassword())) { // if user exists and password entered
@@ -34,7 +36,7 @@ public class SessionController {
 				req.session().attribute("currentUser", user); // sets attritute to object
 			}
 		}
-		res.redirect("/");
+		res.redirect(req.queryParamOrDefault("returnPath", "/")); //if path doesnt exist, go to slash		
 		return ""; // redirects should return empty body;
 	};
 

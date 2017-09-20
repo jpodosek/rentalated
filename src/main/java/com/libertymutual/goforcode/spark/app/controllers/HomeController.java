@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.libertymutual.goforcode.spark.app.models.Apartment;
 import com.libertymutual.goforcode.spark.app.models.User;
-import com.libertymutual.goforcode.spark.app.utilities.AutoClosableDb;
+import com.libertymutual.goforcode.spark.app.utilities.AutoCloseableDb;
 import com.libertymutual.goforcode.spark.app.utilities.MustacheRenderer;
 
 import spark.ModelAndView;
@@ -19,7 +19,7 @@ public class HomeController {
 	
 	//since this is a variable assignment (route = lambda function), ends w/ ;
 	public static final Route index = (Request req, Response res) -> {	 
-		try (AutoClosableDb db = new AutoClosableDb()) {
+		try (AutoCloseableDb db = new AutoCloseableDb()) {
 		List<Apartment> apartments = Apartment.findAll();	
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("apartments", apartments);
