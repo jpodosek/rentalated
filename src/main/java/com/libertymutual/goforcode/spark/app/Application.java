@@ -8,9 +8,12 @@ import java.util.Map;
 import org.javalite.activejdbc.Base;
 import org.mindrot.jbcrypt.BCrypt;
 
+import com.libertymutual.goforcode.spark.app.controllers.ApartmentApiController;
 import com.libertymutual.goforcode.spark.app.controllers.ApartmentController;
 import com.libertymutual.goforcode.spark.app.controllers.HomeController;
 import com.libertymutual.goforcode.spark.app.controllers.SessionController;
+import com.libertymutual.goforcode.spark.app.controllers.UserApiController;
+import com.libertymutual.goforcode.spark.app.controllers.UserController;
 import com.libertymutual.goforcode.spark.app.models.Apartment;
 import com.libertymutual.goforcode.spark.app.models.User;
 import com.libertymutual.goforcode.spark.app.utilities.AutoClosableDb;
@@ -19,7 +22,7 @@ import com.libertymutual.goforcode.spark.app.utilities.MustacheRenderer;
 public class Application {
 
     public static void main(String[] args)  {    	
-    	String encryptedPassword =  BCrypt.hashpw("somepassword", BCrypt.gensalt());
+    	String encryptedPassword =  BCrypt.hashpw("password", BCrypt.gensalt());
 
     	try (AutoClosableDb db = new AutoClosableDb()) {
 	    	User.deleteAll();
@@ -33,8 +36,27 @@ public class Application {
     	
     	get("/", HomeController.index); //
     	get("/apartments/:id", ApartmentController.details);
+  
     	get("/login", SessionController.newForm);
     	post("/login", SessionController.create);
+    	get("/logout", SessionController.logout);
+    	
+    	get("/signup", UserController.newForm);
+    	get("/users/:id", UserController.details);
+    	post("/signup", UserController.create);
+    	
+    	
+    	path("/api",  () -> {
+        	get("/users/:id", UserApiController.details);
+        	post("/users", UserApiController.create);
+    	});
+    	
+    	path("/api",  () -> {
+    	get("/apartments/:id", ApartmentApiController.details);
+    	post("/apartments",ApartmentApiController.create);
+    	});
+    	
+    	
     	
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.libertymutual.goforcode.spark.app.models.Apartment;
+import com.libertymutual.goforcode.spark.app.models.User;
 import com.libertymutual.goforcode.spark.app.utilities.AutoClosableDb;
 import com.libertymutual.goforcode.spark.app.utilities.MustacheRenderer;
 
@@ -22,12 +23,18 @@ public class HomeController {
 		List<Apartment> apartments = Apartment.findAll();	
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("apartments", apartments);
+		
+		//recently added so users display on home page
+		List<User> users = User.findAll();	
+		model.put("users", users);
+		
+		
 		model.put("currentUser", req.session().attribute("currentUser"));
 		model.put("noUser", req.session().attribute("currentUser") == null);		
 		//replace with something else - about 7 lines of code
-		//return MustacheRenderer.getInstance().render("home/index.html", model);
+		return MustacheRenderer.getInstance().render("home/index.html", model);
 		
-		return new VelocityTemplateEngine().render(new ModelAndView(model, "templates/home/index2.html"));
+		//return new VelocityTemplateEngine().render(new ModelAndView(model, "templates/home/index2.html"));
 		}
 	        };
 
