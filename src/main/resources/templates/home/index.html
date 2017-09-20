@@ -8,18 +8,13 @@
 	{{> /common/_navigation }}
 	
 	<h1>Apartments!</h1>
-	<a href="/apartments/new">List a New Apartment</a> {{#apartments}}
+	 {{#activeApartments}}
+	<a href="/apartments/new">List a New Apartment</a>
 	<div>
 		<a href="/apartments/{{id}}">{{address}}</a>
 	</div>
-	{{/apartments}}
+	{{/activeApartments}}
 
-	<h1>Users</h1>
-	{{#users}}
-	<div>
-		<a href="/users/{{id}}">{{firstName}}{{lastName}}</a>
-	</div>
-	{{/users}}
-	 {{#error}} {{ . }}{{/error}}
+
 </body>
 </html>

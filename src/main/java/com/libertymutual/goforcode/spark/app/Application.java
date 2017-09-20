@@ -39,8 +39,7 @@ public class Application {
 	    	
 	    	user = new User("test@gmail.com", encryptedPassword, "test", "test"); 
 	    	user.saveIt();    	
-	    	Apartment.deleteAll();
-	    	apartment = new Apartment(2000, 1, 0, 700, "123 Main St", "San Fransisco", "CA", "95215");
+	    	apartment = new Apartment(4000, 4, 3, 2300, "23322 Pike Pl", "Seattle", "WA", "98036");
 	    	user.add(apartment);
 	    	apartment.saveIt();
     	}

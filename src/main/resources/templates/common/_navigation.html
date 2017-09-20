@@ -6,5 +6,7 @@
 {{#currentUser}}
 	<a href="/apartments/mine">Your listings</a>
 	<a href="/apartments/new">Add a Listing</a>
-	<a href="/logout">Log out</a> 
+	<form action="/logout" method="get">
+		<button>Log out</button>
+	</form>
 {{/currentUser}}
