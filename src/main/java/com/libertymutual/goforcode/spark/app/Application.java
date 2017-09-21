@@ -3,6 +3,7 @@ package com.libertymutual.goforcode.spark.app;
 import static spark.Spark.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.javalite.activejdbc.Base;
@@ -16,6 +17,7 @@ import com.libertymutual.goforcode.spark.app.controllers.UserApiController;
 import com.libertymutual.goforcode.spark.app.controllers.UserController;
 import com.libertymutual.goforcode.spark.app.filters.SecurityFilters;
 import com.libertymutual.goforcode.spark.app.models.Apartment;
+import com.libertymutual.goforcode.spark.app.models.ApartmentsUsers;
 import com.libertymutual.goforcode.spark.app.models.User;
 import com.libertymutual.goforcode.spark.app.utilities.AutoCloseableDb;
 import com.libertymutual.goforcode.spark.app.utilities.MustacheRenderer;
@@ -29,23 +31,45 @@ public class Application {
     	String encryptedPassword =  BCrypt.hashpw("password", BCrypt.gensalt());
 
     	try (AutoCloseableDb db = new AutoCloseableDb()) {
+    		//ApartmentsUsers like = ApartmentsUsers.createIt("like", 1);
+    		//user 1
 	    	User.deleteAll();
 	    	User user = new User("jon@gmail.com", encryptedPassword, "Jon", "Podosek"); 
 	    	user.saveIt();    	
 	    	Apartment.deleteAll();
+	    	//apartment 1 -> user 1
 	    	Apartment apartment = new Apartment(2000, 1, 0, 700, "123 Main St", "San Fransisco", "CA", "95215");
-	    	user.add(apartment);
+	    	apartment.setBoolean("is_active", true); 	
+	    	user.add(apartment); //user creates a new apartment;
 	    	apartment.saveIt();
+	    	apartment.add(user); //create like - count of # users associated with a particular apartment
+	    	//---------Find like --------------
+	    	Apartment apartmentLiked = Apartment.findById(apartment.getId());
+	    	List<User> users = apartmentLiked.getAll(User.class);
+	    	int numLikes = users.size();
+	    	System.out.println("number of likes: " + numLikes);
 	    	
-	    	user = new User("test@gmail.com", encryptedPassword, "test", "test"); 
+	    	//------------------------
+	    	//apartment 2 -> user 1
+	    	Apartment apartment2 = new Apartment(1500,2, 3.5, 1800, "Hollywood Blvd", "Hollywood", "CA", "95205");
+	    	apartment2.setBoolean("is_active", false);
+	    	user.add(apartment2);
+	    	apartment2.saveIt();
+	    	apartment.add(user); //create like
+	    	
+	    	//-------User2 & apartment 3)
+	    	user = new User("test@gmail.com", encryptedPassword, "Mark", "Wahlberg"); 
 	    	user.saveIt();    	
-	    	apartment = new Apartment(4000, 4, 3, 2300, "23322 Pike Pl", "Seattle", "WA", "98036");
-	    	user.add(apartment);
-	    	apartment.saveIt();
+	    	apartment2 = new Apartment(4000, 4, 3, 2300, "23322 Pike Pl", "Seattle", "WA", "98036"); //not active (false by default)
+	    	apartment2.setBoolean("is_active", false);
+	    	user.add(apartment2);
+	    	apartment2.saveIt();
     	}
     	
+    	//Home
     	get("/", HomeController.index); //
     	
+    	//Apartments
     	path("/apartments",  () -> {
 	    	before("/new", SecurityFilters.isAuthenticated);
 	    	get("/new", ApartmentController.newForm); //serve up form to create apartment
@@ -59,15 +83,17 @@ public class Application {
 	    	post("", ApartmentController.create); //handle apartment create form post
     	});
     	
-    	
+    	//Session
     	get("/login", SessionController.newForm);
     	post("/login", SessionController.create);
     	get("/logout", SessionController.logout);
     	
+    	//user
     	get("/signup", UserController.newForm);
     	get("/users/:id", UserController.details);
     	post("/signup", UserController.create);
     	
+    	//Api Controllers ---------------------------
     	path("/api",  () -> {
         	get("/users/:id", UserApiController.details);
         	post("/users", UserApiController.create);

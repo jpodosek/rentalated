@@ -9,9 +9,8 @@
 	
 	<h1>Apartments!</h1>
 	 {{#activeApartments}}
-	<a href="/apartments/new">List a New Apartment</a>
 	<div>
-		<a href="/apartments/{{id}}">{{address}}</a>
+		<a href="/apartments/{{id}}">{{address}}&nbsp;{{city}},&nbsp;{{state}}</a>
 	</div>
 	{{/activeApartments}}
 

@@ -11,13 +11,27 @@
   {{ apartment.address }}<br>
   {{ apartment.city }}, {{ apartment.state }} {{ apartment.zipCode }}
 </p>
-<dl>
-  <dt>Number of bedrooms</dt>
-  <dd>{{ apartment.numberOfBedrooms }}</dd>
-  <dt>Number of bathrooms</dt>
-  <dd>{{ apartment.numberOfBathrooms }}</dd>
-  <dt>Square footage</dt>
-  <dd>{{ apartment.squareFootage }}</dd>
-</dl>
+<h3>Details</h3>
+<ul>
+   <li>Bedrooms:&nbsp {{ apartment.numberOfBedrooms }}</li>
+   <li>Bathrooms:&nbsp{{ apartment.numberOfBathrooms }}</li>
+   <li>Square Feet:&nbsp:{{ apartment.squareFootage }}</li>
+</ul>
+<div>Likes:&nbsp{{apartment.likes}}{{ . }}{{apartment.likes}}</div>
+{{#noUser}}
+<a href="/login?returnPath=/apartments/:id">Login to LIKE this apartment</a>
+{{/noUser}}
+{{#currentUser}}
+	{{#hasListed}}
+		{{#hasLiked}}
+		<form action="/apartments/:id/like">
+			<input type="image" src="https://cdn.worldvectorlogo.com/logos/facebook-like.svg" height="100" width="100" />
+		</form>
+		{{/hasLiked}}
+	{{/hasListed}}
+{{/currentUser}}
+<form action="/apartments/:id/like">
+			<input type="image" src="https://cdn.worldvectorlogo.com/logos/facebook-like.svg" height="30" width="30" />
+		</form>
 </body>
 </html>

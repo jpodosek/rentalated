@@ -16,6 +16,25 @@ import spark.Response;
 import spark.Route;
 
 public class ApartmentController {
+	
+	public static final Route index = (Request req, Response res) -> {
+		
+		try (AutoCloseableDb db = new AutoCloseableDb()) {
+			User currentUser = req.session().attribute("currentUser");
+			//List<Apartment> apartments = Apartment.where("user_id = ?", currentUser.getId()); //same as below
+			List<Apartment> activeApartments = currentUser.get(Apartment.class, "is_active = ?", true);
+			List<Apartment> inactiveApartments = currentUser.get(Apartment.class, "is_active = ?", false);
+			//List<Apartment> apartments = currentUser.getAll(Apartment.class);
+			
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("currentUser", currentUser);
+			model.put("noUser", req.session().attribute("currentUser") == null);	
+			model.put("activeApartments", activeApartments);
+			model.put("inactiveApartments", inactiveApartments);
+
+			return MustacheRenderer.getInstance().render("apartment/index.html", model);
+		}
+	};
 
 	public static final Route details = (Request req, Response res) -> {
 		int id = Integer.parseInt(req.params("id"));
@@ -26,6 +45,8 @@ public class ApartmentController {
 			model.put("currentUser", req.session().attribute("currentUser"));
 			model.put("noUser", req.session().attribute("currentUser") == null);	
 			model.put("apartment", apartment);
+			model.put("hasLiked", null);
+			model.put("hasListed", null);
 			return MustacheRenderer.getInstance().render("apartment/details.html", model);
 		}
 	};
@@ -42,17 +63,19 @@ public class ApartmentController {
 		try (AutoCloseableDb db = new AutoCloseableDb()) {
 
 			int rent = Integer.parseInt(req.queryParams("rent"));
-			int bedrooms = Integer.parseInt(req.queryParams("numberOfBedrooms"));
-			double bathrooms = Double.parseDouble(req.queryParams("numberOfBathrooms"));
-			int squareFootage = Integer.parseInt(req.queryParams("squareFootage"));
+			int bedrooms = Integer.parseInt(req.queryParams("number_of_bedrooms"));
+			double bathrooms = Double.parseDouble(req.queryParams("number_of_bathrooms"));
+			int squareFootage = Integer.parseInt(req.queryParams("square_footage"));
 			String address = req.queryParams("address");
 			String city = req.queryParams("city");
 			String state = req.queryParams("state");
-			String zipCode = req.queryParams("zipCode");
+			String zipCode = req.queryParams("zip_code");
 
 			Apartment apartment = new Apartment(rent, bedrooms, bathrooms, squareFootage, address, city, state,
 					zipCode);
 			apartment.saveIt();
+			
+			
 			req.session().attribute("apartment", apartment);
 			res.redirect("");
 			return "";
@@ -64,20 +87,5 @@ public class ApartmentController {
 		}
 	};
 
-	public static final Route index = (Request req, Response res) -> {
 	
-		try (AutoCloseableDb db = new AutoCloseableDb()) {
-			User currentUser = req.session().attribute("currentUser");
-			//List<Apartment> apartments = Apartment.where("user_id = ?", currentUser.getId()); //same as below
-			//List<Apartment> apartments = currentUser.get(Apartment.class, "city = ?", "seattle");
-			List<Apartment> apartments = currentUser.getAll(Apartment.class);
-			
-			Map<String, Object> model = new HashMap<String, Object>();
-			model.put("currentUser", currentUser);
-			model.put("noUser", req.session().attribute("currentUser") == null);	
-			model.put("apartments", apartments);
-
-			return MustacheRenderer.getInstance().render("apartment/index.html", model);
-		}
-	};
 }

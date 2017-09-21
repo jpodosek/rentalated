@@ -6,14 +6,19 @@
 </head>
 <body>
 {{> /common/_navigation }}
-	{{currentUser.firstName}}({{currentUser.email}}) 
 
 	<h1>My Apartment Listings</h1>
-	<a href="/apartments/new">List a New Apartment</a> 
-	{{#apartments}}
+	
+	<h2>Active Listings</h2>
+	{{#activeApartments}}
+		<a href="/apartments/{{id}}">{{address}}</a> <br>
+	{{/activeApartments}}
+	
+	<h2>Inactive Listings</h2>
+	{{#inactiveApartments}}
 	<div>
-		<a href="/apartments/{{id}}">{{address}}</a>
+		<a href="/apartments/{{id}}">{{address}}</a><br>
 	</div>
-	{{/apartments}}
+	{{/inactiveApartments}}
 </body>
 </html>
