@@ -1,14 +1,11 @@
 package com.libertymutual.goforcode.spark.app.controllers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.list.LazyList;
 
 import com.libertymutual.goforcode.spark.app.models.Apartment;
-import com.libertymutual.goforcode.spark.app.models.ApartmentsUsers;
 import com.libertymutual.goforcode.spark.app.models.User;
 import com.libertymutual.goforcode.spark.app.utilities.AutoCloseableDb;
 import com.libertymutual.goforcode.spark.app.utilities.MustacheRenderer;
@@ -23,11 +20,8 @@ public class ApartmentController {
 
 		try (AutoCloseableDb db = new AutoCloseableDb()) {
 			User currentUser = req.session().attribute("currentUser");
-			// List<Apartment> apartments = Apartment.where("user_id = ?",
-			// currentUser.getId()); //same as below
 			List<Apartment> activeApartments = currentUser.get(Apartment.class, "is_active = ?", true);
 			List<Apartment> inactiveApartments = currentUser.get(Apartment.class, "is_active = ?", false);
-			// List<Apartment> apartments = currentUser.getAll(Apartment.class);
 
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("currentUser", currentUser);
@@ -50,7 +44,8 @@ public class ApartmentController {
 			int apartmentId = Integer.parseInt(req.params("id"));
 			Apartment apartment = Apartment.findById(apartmentId);
 			User currentUser = req.session().attribute("currentUser"); // is logged in
-			List<User> apartmentLikes = apartment.getAll(User.class); // list of all users associated with this particular apartment
+			List<User> apartmentLikes = apartment.getAll(User.class); // list of all users associated with this
+																		// particular apartment
 			numLikes = apartmentLikes.size();
 			// is apartment active logic
 			if (apartment.getIsActive() == true) {
@@ -59,18 +54,13 @@ public class ApartmentController {
 				displayisNotActive = true;
 			}
 
-
 			// determine if user has already liked apartment
-			// if current user id is in likes list , then user has already liked it
-		
-			//find all apartments in apartments_users that match the apartment id above
-			//for each apartment in this list, if apartments_users "user_id" field == "currentUser.getId()", likeable is false	
-			//if (currentUser != null && !likes.contains(currentUser))
-			if (					currentUser != null && 
-									!apartment.get("user_id").equals(currentUser.getId()) && //apartment owner is not the current user
-									ApartmentsUsers.where("apartment_id = ? and user_id = ?", apartmentId, currentUser.getId()).isEmpty()) 
-			{
-				isLikeable = true;	
+			if (currentUser != null && !apartment.get("user_id").equals(currentUser.getId())) {
+				isLikeable = true;
+				for (User user : apartmentLikes) {
+					if (user.getId() == currentUser.getId())
+						isLikeable = false;
+				}
 			}
 
 			// has user listed logic
@@ -87,7 +77,7 @@ public class ApartmentController {
 			model.put("id", apartmentId);
 			model.put("apartmentLikes", apartmentLikes);
 			System.out.println("apartmentLikes: " + apartmentLikes.toString());
-			
+
 			model.put("numLikes", numLikes);
 			model.put("isActive", displayIsActive);
 			model.put("isNotActive", displayisNotActive);
@@ -127,7 +117,8 @@ public class ApartmentController {
 			currentUser.add(apartment); // associate apartment with the logged in user as its lister.
 			apartment.saveIt();
 
-			//req.session().attribute("apartment", apartment); // DONT PUT APARTMENT IN SESSION
+			// req.session().attribute("apartment", apartment); // DONT PUT APARTMENT IN
+			// SESSION
 			req.session().attribute("isLister", "isLister");
 			res.redirect("");
 			return "";
