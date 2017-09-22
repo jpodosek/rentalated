@@ -1,12 +1,12 @@
 {{#noUser}}
 	<a href="/login">Login</a>
-	<a href="/users/new">Sign Up</a> 
+	<a href="/users/new">Sign up</a> 
 {{/noUser}}
 
 {{#currentUser}}
 	<a href="/apartments/mine">Your listings</a>
-	<a href="/apartments/new">Add a Listing</a>
+	<a href="/apartments/new">Add a listing</a>
 	<form action="/logout" method="get">
-		<button>Log out</button>
+	<button>Logout</button>
 	</form>
 {{/currentUser}}

@@ -35,7 +35,6 @@ public class UserController {
 			String firstName = req.queryParams("first_name");
 			String lastName = req.queryParams("last_name");
 			User user = new User(email, encryptedPassword, firstName, lastName);
-
 			user.saveIt();
 			req.session().attribute("currentUser", user);
 			res.redirect("/");

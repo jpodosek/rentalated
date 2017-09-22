@@ -2,11 +2,8 @@ package com.libertymutual.goforcode.spark.app;
 
 import static spark.Spark.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.javalite.activejdbc.Base;
 import org.mindrot.jbcrypt.BCrypt;
 
 import com.libertymutual.goforcode.spark.app.controllers.ApartmentApiController;
@@ -20,10 +17,7 @@ import com.libertymutual.goforcode.spark.app.models.Apartment;
 import com.libertymutual.goforcode.spark.app.models.ApartmentsUsers;
 import com.libertymutual.goforcode.spark.app.models.User;
 import com.libertymutual.goforcode.spark.app.utilities.AutoCloseableDb;
-import com.libertymutual.goforcode.spark.app.utilities.MustacheRenderer;
 
-import spark.Request;
-import spark.Response;
 
 public class Application {
 
@@ -41,7 +35,7 @@ public class Application {
 	    	apartment.setBoolean("is_active", true); 	
 	    	user.add(apartment); //user creates a new apartment;
 	    	apartment.saveIt();
-	    	apartment.add(user); //create like - count of # users associated with a particular apartment
+	    	//apartment.add(user); //create like - count of # users associated with a particular apartment
 	    	//---------Find like --------------
 	    	Apartment apartmentLiked = Apartment.findById(apartment.getId());
 	    	List<User> users = apartmentLiked.getAll(User.class);

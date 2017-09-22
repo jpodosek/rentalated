@@ -4,8 +4,8 @@
 	<groupId>com.libertymutual.goforcode.spark.app</groupId>
 	<artifactId>com.libertymutual.goforcode.spark.app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>collarbone</name>
-	<description>broken collarbones hurt</description>
+	<name>rentalated</name>
+	<description>Rental App</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.mindrot</groupId>

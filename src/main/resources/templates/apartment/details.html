@@ -7,39 +7,13 @@
 <body>
 {{> /common/_navigation }}
 <h1>Only ${{ apartment.rent }}</h1>
-<p>
-  {{ apartment.address }}<br>
-  {{ apartment.city }}, {{ apartment.state }} {{ apartment.zipCode }}
-</p>
-<h3>Details</h3>
-<ul>
-   <li>Bedrooms:&nbsp {{ apartment.numberOfBedrooms }}</li>
-   <li>Bathrooms:&nbsp{{ apartment.numberOfBathrooms }}</li>
-   <li>Square Feet:&nbsp:{{ apartment.squareFootage }}</li>
-</ul>
-<div>Number of likes:&nbsp {{numLikes}}</div>
 
-{{#noUser}}
-<a href="/login?returnPath=/apartments/{{apartment.id}}">Login to LIKE this apartment</a>
-{{/noUser}}
-{{#isLikeable}}
-		{{#hasNotListed}}
-			<div>
-				<form method="post" action="/apartments/{{apartment.id}}/likes">
-					<button>Like this apartment</button>
-				</form>
-			</div>
-		{{/hasNotListed}}
-	{{/isLikeable}}
-	
 {{#currentUser}}
 	{{#hasListed}}
-	
-	{{#likes}}
-		{{user.firstName}} &nbsp; {{user.lastName}}
-	{{/likes}}
-
-	
+		{{#apartmentLikes}}
+			<div>People that have liked it: </div>
+			{{firstName}}{{lastName}}
+		{{/apartmentLikes}}
 		{{#isActive}}
 			{{#apartment}}
 			<h2>Deactivate listing</h2>
@@ -58,6 +32,34 @@
 		{{/isNotActive}}	
 	{{/hasListed}}
 {{/currentUser}}
+
+<p>
+  {{ apartment.address }}<br>
+  {{ apartment.city }}, {{ apartment.state }} {{ apartment.zipCode }}
+</p>
+<h3>Details</h3>
+<ul>
+   <li>Bedrooms:&nbsp {{ apartment.numberOfBedrooms }}</li>
+   <li>Bathrooms:&nbsp{{ apartment.numberOfBathrooms }}</li>
+   <li>Square Feet:&nbsp:{{ apartment.squareFootage }}</li>
+</ul>
+<div>Number of likes:&nbsp {{numLikes}}</div>
+
+{{#noUser}}
+<a href="/login?returnPath=/apartments/{{apartment.id}}">Login to LIKE this apartment</a>
+{{/noUser}}
+
+{{#isLikeable}}
+		{{#hasNotListed}}
+			<div>
+				<form method="post" action="/apartments/{{apartment.id}}/likes">
+					<button>Like this apartment</button>
+				</form>
+			</div>
+		{{/hasNotListed}}
+{{/isLikeable}}
+	
+
 
 </body>
 </html>

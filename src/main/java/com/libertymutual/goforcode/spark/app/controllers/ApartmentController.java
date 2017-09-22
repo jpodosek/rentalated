@@ -86,6 +86,8 @@ public class ApartmentController {
 			model.put("noUser", req.session().attribute("currentUser") == null);
 			model.put("id", apartmentId);
 			model.put("apartmentLikes", apartmentLikes);
+			System.out.println("apartmentLikes: " + apartmentLikes.toString());
+			
 			model.put("numLikes", numLikes);
 			model.put("isActive", displayIsActive);
 			model.put("isNotActive", displayisNotActive);
