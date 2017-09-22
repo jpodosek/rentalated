@@ -28,11 +28,10 @@ import spark.Response;
 public class Application {
 
     public static void main(String[] args)  {    	
-    	String encryptedPassword =  BCrypt.hashpw("password", BCrypt.gensalt());
+    	String encryptedPassword =  BCrypt.hashpw("t", BCrypt.gensalt());
 
     	try (AutoCloseableDb db = new AutoCloseableDb()) {
-    		//ApartmentsUsers like = ApartmentsUsers.createIt("like", 1);
-    		//user 1
+    		ApartmentsUsers.deleteAll();
 	    	User.deleteAll();
 	    	User user = new User("jon@gmail.com", encryptedPassword, "Jon", "Podosek"); 
 	    	user.saveIt();    	
@@ -51,19 +50,23 @@ public class Application {
 	    	
 	    	//------------------------
 	    	//apartment 2 -> user 1
-	    	Apartment apartment2 = new Apartment(1500,2, 3.5, 1800, "Hollywood Blvd", "Hollywood", "CA", "95205");
-	    	apartment2.setBoolean("is_active", false);
-	    	user.add(apartment2);
-	    	apartment2.saveIt();
-	    	apartment.add(user); //create like
+	    	apartment = new Apartment(1500,2, 3.5, 1800, "Hollywood Blvd", "Hollywood", "CA", "95205");
+	    	apartment.setBoolean("is_active", false);
+	    	user.add(apartment);
+	    	apartment.saveIt();
 	    	
 	    	//-------User2 & apartment 3)
-	    	user = new User("test@gmail.com", encryptedPassword, "Mark", "Wahlberg"); 
-	    	user.saveIt();    	
-	    	apartment2 = new Apartment(4000, 4, 3, 2300, "23322 Pike Pl", "Seattle", "WA", "98036"); //not active (false by default)
-	    	apartment2.setBoolean("is_active", false);
-	    	user.add(apartment2);
-	    	apartment2.saveIt();
+	    	User user2 = new User("test@gmail.com", encryptedPassword, "Mark", "Wahlberg"); 
+	    	user2.saveIt();    	
+	    	apartment = new Apartment(4000, 4, 3, 2300, "23322 Pike Pl", "Seattle", "WA", "98036"); //not active (false by default)
+	    	apartment.setBoolean("is_active", true);
+	    	user2.add(apartment);
+	    	apartment.saveIt();
+	    	//-------User2 & apartment 4)
+	    	apartment = new Apartment(2101, 2, 3, 1500, "12345 Street S", "Poopland", "VA", "010234"); //not active (false by default)
+	    	apartment.setBoolean("is_active", true);
+	    	user2.add(apartment);
+	    	apartment.saveIt();
     	}
     	
     	//Home
@@ -77,10 +80,20 @@ public class Application {
 	    	before("/mine", SecurityFilters.isAuthenticated);	
 	    	get("/mine", ApartmentController.index);
 	    	
-	    	get("/:id", ApartmentController.details);
-	    	
 	    	before("", SecurityFilters.isAuthenticated);
 	    	post("", ApartmentController.create); //handle apartment create form post
+	    	
+	    	get("/:id", ApartmentController.details);	
+	    	
+	    	before("/:id/activations", SecurityFilters.IsAuthenticatedAndIsLister);
+	    	post("/:id/activations", ApartmentController.activate);
+	    	
+	    	before("/:id/deactivations", SecurityFilters.IsAuthenticatedAndIsLister);
+	    	post("/:id/deactivations", ApartmentController.deactivate);  
+	    	
+	    	before("/:id/likes", SecurityFilters.isAuthenticated);
+	    	post("/:id/likes", ApartmentController.likes);
+	    	
     	});
     	
     	//Session
@@ -89,9 +102,9 @@ public class Application {
     	get("/logout", SessionController.logout);
     	
     	//user
-    	get("/signup", UserController.newForm);
-    	get("/users/:id", UserController.details);
-    	post("/signup", UserController.create);
+    	get("/users/new", UserController.newForm);
+    	post("/users", UserController.create);
+    	get("/users/:id", UserController.details);	
     	
     	//Api Controllers ---------------------------
     	path("/api",  () -> {
@@ -103,6 +116,8 @@ public class Application {
 	    	get("/apartments/:id", ApartmentApiController.details);
 	    	post("/apartments",ApartmentApiController.create);
     	});
+    	
+    	
     	
     	
     	

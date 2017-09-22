@@ -4,8 +4,9 @@ package com.libertymutual.goforcode.spark.app.models;
 import org.javalite.activejdbc.Model;
 
 public class Apartment extends Model {
-	public User user;
+//	public User user;
 	public Apartment() {}
+	
 
 	public Apartment(int rent, int number_of_bedrooms, double number_of_bathrooms, int square_footage, String address, String city, String state, String zip_code) {
 		setRent(rent);
@@ -82,12 +83,22 @@ public class Apartment extends Model {
 		set("zip_code", zip_code);
 	}
 
-	public User getUser() {
-		return user;
+//	public User getUser() {
+//		return user;
+//	}
+//
+//	public void setUser(User user) {
+//		this.user = user;
+//	}
+
+	public boolean getIsActive() {
+		return getBoolean("is_active");
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setActive(boolean is_active) {
+		set("is_active", is_active);
 	}
+	
+	
 
 }

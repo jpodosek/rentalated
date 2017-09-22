@@ -17,21 +17,47 @@
    <li>Bathrooms:&nbsp{{ apartment.numberOfBathrooms }}</li>
    <li>Square Feet:&nbsp:{{ apartment.squareFootage }}</li>
 </ul>
-<div>Likes:&nbsp{{apartment.likes}}{{ . }}{{apartment.likes}}</div>
+<div>Number of likes:&nbsp {{numLikes}}</div>
+
 {{#noUser}}
-<a href="/login?returnPath=/apartments/:id">Login to LIKE this apartment</a>
+<a href="/login?returnPath=/apartments/{{apartment.id}}">Login to LIKE this apartment</a>
 {{/noUser}}
+{{#isLikeable}}
+		{{#hasNotListed}}
+			<div>
+				<form method="post" action="/apartments/{{apartment.id}}/likes">
+					<button>Like this apartment</button>
+				</form>
+			</div>
+		{{/hasNotListed}}
+	{{/isLikeable}}
+	
 {{#currentUser}}
 	{{#hasListed}}
-		{{#hasLiked}}
-		<form action="/apartments/:id/like">
-			<input type="image" src="https://cdn.worldvectorlogo.com/logos/facebook-like.svg" height="100" width="100" />
-		</form>
-		{{/hasLiked}}
+	
+	{{#likes}}
+		{{user.firstName}} &nbsp; {{user.lastName}}
+	{{/likes}}
+
+	
+		{{#isActive}}
+			{{#apartment}}
+			<h2>Deactivate listing</h2>
+			<form method="post" action="/apartments/{{id}}/deactivations">
+				<button type="submit">Deactivate listing</button>
+			</form>
+			{{/apartment}}
+		{{/isActive}}
+		{{#isNotActive}}
+			{{#apartment}}
+			<h2>Activate listing</h2>
+			<form method="post" method="post" action="/apartments/{{id}}/activations">
+				<button type="submit">Activate listing</button>
+			</form>
+			{{/apartment}}
+		{{/isNotActive}}	
 	{{/hasListed}}
 {{/currentUser}}
-<form action="/apartments/:id/like">
-			<input type="image" src="https://cdn.worldvectorlogo.com/logos/facebook-like.svg" height="30" width="30" />
-		</form>
+
 </body>
 </html>
