@@ -21,6 +21,7 @@ public class UserController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("currentUser", req.session().attribute("currentUser"));
 		model.put("noUser", req.session().attribute("currentUser") == null);
+		model.put("csrf", req.session().attribute("csrf"));
 		return MustacheRenderer.getInstance().render("users/signup.html", model);
 	};
 

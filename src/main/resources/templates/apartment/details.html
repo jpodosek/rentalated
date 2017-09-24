@@ -17,7 +17,7 @@
 		{{#isActive}}
 			{{#apartment}}
 			<h2>Deactivate listing</h2>
-			<form method="post" action="/apartments/{{id}}/deactivations">
+			<form method="post" action="/apartments/{{apartment.id}}/deactivations">
 				<button type="submit">Deactivate listing</button>
 			</form>
 			{{/apartment}}
@@ -25,7 +25,7 @@
 		{{#isNotActive}}
 			{{#apartment}}
 			<h2>Activate listing</h2>
-			<form method="post" method="post" action="/apartments/{{id}}/activations">
+			<form method="post" method="post" action="/apartments/{{apartment.id}}/activations">
 				<button type="submit">Activate listing</button>
 			</form>
 			{{/apartment}}

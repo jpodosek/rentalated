@@ -39,7 +39,6 @@ public class ApartmentController {
 		boolean isLikeable = false;
 		boolean hasListed = false;
 		int numLikes;
-		// boolean activeStatus;
 		try (AutoCloseableDb db = new AutoCloseableDb()) {
 			int apartmentId = Integer.parseInt(req.params("id"));
 			Apartment apartment = Apartment.findById(apartmentId);
@@ -69,20 +68,16 @@ public class ApartmentController {
 
 				hasListed = true;
 			}
-			// Apartment apartmentToCompare = Apartment.where("user_id = ?",
-
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("currentUser", currentUser);
 			model.put("noUser", req.session().attribute("currentUser") == null);
-			model.put("id", apartmentId);
+			//model.put("id", apartmentId);
+			model.put("apartment", apartment);
 			model.put("apartmentLikes", apartmentLikes);
-			System.out.println("apartmentLikes: " + apartmentLikes.toString());
-
 			model.put("numLikes", numLikes);
+			model.put("isLikeable", isLikeable);
 			model.put("isActive", displayIsActive);
 			model.put("isNotActive", displayisNotActive);
-			model.put("apartment", apartment);
-			model.put("isLikeable", isLikeable);
 			model.put("hasListed", hasListed);
 			model.put("hasNotListed", !hasListed); // hasListed == false
 			return MustacheRenderer.getInstance().render("apartment/details.html", model);
@@ -93,6 +88,7 @@ public class ApartmentController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("currentUser", req.session().attribute("currentUser"));
 		model.put("noUser", req.session().attribute("currentUser") == null);
+		model.put("csrf", req.session().attribute("csrf"));
 		return MustacheRenderer.getInstance().render("apartment/newForm.html", model); // null when no model needed
 	};
 
@@ -116,9 +112,6 @@ public class ApartmentController {
 			User currentUser = req.session().attribute("currentUser");
 			currentUser.add(apartment); // associate apartment with the logged in user as its lister.
 			apartment.saveIt();
-
-			// req.session().attribute("apartment", apartment); // DONT PUT APARTMENT IN
-			// SESSION
 			req.session().attribute("isLister", "isLister");
 			res.redirect("");
 			return "";
@@ -132,7 +125,6 @@ public class ApartmentController {
 			Apartment apartment = Apartment.findById(id);
 			apartment.setBoolean("is_active", true);
 			apartment.saveIt();
-			System.out.println("apartment is :" + apartment);
 			res.redirect("/apartments/" + id);
 			return "";
 		}
@@ -141,11 +133,9 @@ public class ApartmentController {
 	// activate listing
 	public static final Route deactivate = (Request req, Response res) -> {
 		try (AutoCloseableDb db = new AutoCloseableDb()) {
-
 			int id = Integer.parseInt(req.params("id"));
 			Apartment apartment = Apartment.findById(id);
 			System.out.println("apartment is :" + apartment);
-			// apartment.setActive(false);
 			apartment.set("is_active", false);
 			apartment.saveIt();
 			res.redirect("/apartments/" + id);
@@ -156,7 +146,6 @@ public class ApartmentController {
 	// activate listing
 	public static final Route likes = (Request req, Response res) -> {
 		try (AutoCloseableDb db = new AutoCloseableDb()) {
-
 			int id = Integer.parseInt(req.params("id"));
 			Apartment apartment = Apartment.findById(id);
 			User currentUser = req.session().attribute("currentUser");

@@ -18,6 +18,8 @@ import com.libertymutual.goforcode.spark.app.models.ApartmentsUsers;
 import com.libertymutual.goforcode.spark.app.models.User;
 import com.libertymutual.goforcode.spark.app.utilities.AutoCloseableDb;
 
+import spark.Filter;
+
 
 public class Application {
 
@@ -25,11 +27,12 @@ public class Application {
     	String encryptedPassword =  BCrypt.hashpw("t", BCrypt.gensalt());
 
     	try (AutoCloseableDb db = new AutoCloseableDb()) {
-    		ApartmentsUsers.deleteAll();
+ 			ApartmentsUsers.deleteAll();
 	    	User.deleteAll();
+	    	Apartment.deleteAll();
 	    	User user = new User("jon@gmail.com", encryptedPassword, "Jon", "Podosek"); 
 	    	user.saveIt();    	
-	    	Apartment.deleteAll();
+	    	
 	    	//apartment 1 -> user 1
 	    	Apartment apartment = new Apartment(2000, 1, 0, 700, "123 Main St", "San Fransisco", "CA", "95215");
 	    	apartment.setBoolean("is_active", true); 	
@@ -63,11 +66,13 @@ public class Application {
 	    	apartment.saveIt();
     	}
     	
-    	//Home
-    	get("/", HomeController.index); //
+    	//before("/*", SecurityFilters.isNewSession);
+    //before("/*", SecurityFilters.CSRF_Check);
     	
     	//Apartments
     	path("/apartments",  () -> {
+    		
+    		before("/new", SecurityFilters.isAuthenticated);
 	    	before("/new", SecurityFilters.isAuthenticated);
 	    	get("/new", ApartmentController.newForm); //serve up form to create apartment
 	    	
@@ -79,16 +84,21 @@ public class Application {
 	    	
 	    	get("/:id", ApartmentController.details);	
 	    	
-	    	before("/:id/activations", SecurityFilters.IsAuthenticatedAndIsLister);
+	    	before("/:id/activations", SecurityFilters.isAuthenticated);
+	    	before("/:id/activations", SecurityFilters.isOwner);
 	    	post("/:id/activations", ApartmentController.activate);
 	    	
-	    	before("/:id/deactivations", SecurityFilters.IsAuthenticatedAndIsLister);
+	    	before("/:id/deactivations", SecurityFilters.isAuthenticated);
+	    	before("/:id/deactivations", SecurityFilters.isOwner);
 	    	post("/:id/deactivations", ApartmentController.deactivate);  
 	    	
 	    	before("/:id/likes", SecurityFilters.isAuthenticated);
 	    	post("/:id/likes", ApartmentController.likes);
 	    	
     	});
+    	
+    	//Home
+    	get("/", HomeController.index); //
     	
     	//Session
     	get("/login", SessionController.newForm);
@@ -118,30 +128,3 @@ public class Application {
     }
 }
     	
-    	//MustacheRenderer renderer = new MustacheRenderer("templates");
-//    	
-//    	
-//        get("/hello", (req, res) -> "Hello World");
-//        get("/:id", (req, res) -> "Your chosen id is " + req.params("id")); //placeholders begin with : similar to {id} 
-//        get("/", (req, res) -> {
-//        	
-//        	Map<String, Object> model = new HashMap<String, Object>();
-//        	model.put("name", "Sir");
-//        	model.put("bodyPart", "back");
-//        	model.put("queryLastName", req.queryParamsValues("lastName")); //URLpath ?[lastName] value
-//        	return renderer.render("home/default.html", model);
-//        });
-//        
-//        post("/handlePost", (req, res) -> {
-//        	
-//        	Map<String, Object> model = new HashMap<String, Object>();
-//        	int numberOfOunces = Integer.parseInt(req.queryParams("ounces"));
-//        	if (numberOfOunces > 16) {
-//        		model.put("message", "Since you want to buy over 1 lb, your information has been sent to the DEA ");
-//        	} else {
-//        		model.put("message", "Niiice. Enjoy your " + req.queryParams("weed"));
-//        	}
-//        	return renderer.render("home/ounces.html", model);
-        	
-//        });
-

@@ -20,19 +20,15 @@ public class HomeController {
 	//since this is a variable assignment (route = lambda function), ends w/ ;
 	public static final Route index = (Request req, Response res) -> {	 
 		try (AutoCloseableDb db = new AutoCloseableDb()) {
-		//List<Apartment> apartments = Apartment.findAll();	
 		List<Apartment> activeApartments = Apartment.where("is_active = true");
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("activeApartments", activeApartments); //change to active apartments
 		
-		//recently added so users display on home page
 		List<User> users = User.findAll();	
 		model.put("users", users);
 		model.put("currentUser", req.session().attribute("currentUser"));
 		model.put("noUser", req.session().attribute("currentUser") == null);		
-		//replace with something else - about 7 lines of code
-		return MustacheRenderer.getInstance().render("home/index.html", model);
-		
+		return MustacheRenderer.getInstance().render("home/index.html", model);	
 		//return new VelocityTemplateEngine().render(new ModelAndView(model, "templates/home/index2.html"));
 		}
 	        };
