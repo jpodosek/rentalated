@@ -9,6 +9,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import com.libertymutual.goforcode.spark.app.controllers.ApartmentApiController;
 import com.libertymutual.goforcode.spark.app.controllers.ApartmentController;
 import com.libertymutual.goforcode.spark.app.controllers.HomeController;
+import com.libertymutual.goforcode.spark.app.controllers.SessionApiController;
 import com.libertymutual.goforcode.spark.app.controllers.SessionController;
 import com.libertymutual.goforcode.spark.app.controllers.UserApiController;
 import com.libertymutual.goforcode.spark.app.controllers.UserController;
@@ -65,9 +66,9 @@ public class Application {
 	    	user2.add(apartment);
 	    	apartment.saveIt();
     	}
-    	
+    	enableCORS("http://localhost:4200", "*", "*");
     	//before("/*", SecurityFilters.isNewSession);
-    //before("/*", SecurityFilters.CSRF_Check);
+    	//before("/*", SecurityFilters.CSRF_Check);
     	
     	//Apartments
     	path("/apartments",  () -> {
@@ -112,19 +113,46 @@ public class Application {
     	
     	//Api Controllers ---------------------------
     	path("/api",  () -> {
-        	get("/users/:id", UserApiController.details);
         	post("/users", UserApiController.create);
+        	get("/users/:id", UserApiController.details);
     	});
     	
     	path("/api",  () -> {
+        	post("/sessions", SessionApiController.login);
+    	});
+    	
+    	path("/api",  () -> {
+    		get("/apartments", ApartmentApiController.index);
 	    	get("/apartments/:id", ApartmentApiController.details);
 	    	post("/apartments",ApartmentApiController.create);
     	});
-    	
-    	
-    	
-    	
-    	
+    		
+    }
+    
+    private static void enableCORS(final String origin, final String methods, final String headers) {
+
+        options("/*", (request, response) -> {
+
+            String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
+            if (accessControlRequestHeaders != null) {
+                response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
+            }
+
+            String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
+            if (accessControlRequestMethod != null) {
+                response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
+            }
+
+            return "OK";
+        });
+
+        
+        before((request, response) -> {
+            response.header("Access-Control-Allow-Origin", origin);
+            response.header("Access-Control-Request-Method", methods);
+            response.header("Access-Control-Allow-Headers", headers);
+            response.header("Access-Control-Allow-Credentials", "true");
+        });  
     }
 }
     	

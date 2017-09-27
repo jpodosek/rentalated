@@ -16,17 +16,18 @@ public class SessionController {
 
 	// show form via get
 	public static final Route newForm = (Request req, Response res) -> {
+		System.out.println("This ran here");
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("currentUser", req.session().attribute("currentUser"));
 		model.put("noUser", req.session().attribute("currentUser") == null);	
 		model.put("returnPath", req.queryParams("returnPath"));
-		model.put("csrf_token", req.session().attribute("csfr_token"));
+		model.put("csrf", req.session().attribute("csfr"));
 		return MustacheRenderer.getInstance().render("session/login.html", model);
 	};
 
 	// post - user logs in and creates a session
 	public static final Route create = (Request req, Response res) -> {
-	
+		System.out.println("create route");
 		try (AutoCloseableDb db = new AutoCloseableDb()) {
 		String email = req.queryParams("email");
 		String password = req.queryParams("password");
@@ -36,6 +37,7 @@ public class SessionController {
 			if (user != null && BCrypt.checkpw(password, user.getPassword())) { // if user exists and password entered
 																				// matches hashed password in database
 				req.session().attribute("currentUser", user); // sets attritute to object
+				System.out.println(user.getFirstName());
 			}
 		}
 		res.redirect(req.queryParamOrDefault("returnPath", "/")); //if path doesnt exist, go to slash		

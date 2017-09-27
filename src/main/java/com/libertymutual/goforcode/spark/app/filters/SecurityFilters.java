@@ -24,7 +24,6 @@ public class SecurityFilters {
 	};
 
 	public static Filter isOwner = (Request req, Response res) -> {
-
 		try (AutoCloseableDb db = new AutoCloseableDb()) {
 			User currentUser = req.session().attribute("currentUser");
 			Apartment apartment = Apartment.findById(Integer.parseInt(req.params("id")));
@@ -40,8 +39,8 @@ public class SecurityFilters {
 
 	public static Filter isNewSession = (Request req, Response res) -> {
 		if (req.session().isNew()) {
-			UUID csfr_token = UUID.randomUUID();
-			req.session().attribute("csrf", csfr_token);
+			UUID csrf = UUID.randomUUID();
+			req.session().attribute("csrf", csrf);
 		}
 	};
 	
