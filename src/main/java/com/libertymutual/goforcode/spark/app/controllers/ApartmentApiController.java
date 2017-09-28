@@ -70,19 +70,24 @@ public class ApartmentApiController {
 	public static final Route activate = (Request req, Response res) -> {
 		System.out.println("activate route ran.");
 		try (AutoCloseableDb db = new AutoCloseableDb()) {
-			int id = Integer.parseInt(req.params("id"));
-			Apartment apartment = Apartment.findById(id);
+			Apartment apartment = Apartment.findById(Integer.parseInt(req.params("id")));
 			apartment.setBoolean("is_active", true);
 			apartment.saveIt();
-			res.redirect("/apartments/" + id);
-			return "";
+			res.header("Content-type", "application/json");
+			return apartment.toJson(true);
 		}
 	};
 
 	// activate listing
 	public static final Route deactivate = (Request req, Response res) -> {
 		System.out.println("deactivate route ran.");
-		return "";
+		try (AutoCloseableDb db = new AutoCloseableDb()) {
+			Apartment apartment = Apartment.findById(Integer.parseInt(req.params("id")));
+			apartment.setBoolean("is_active", false);
+			apartment.saveIt();
+			res.header("Content-type", "application/json");
+			return apartment.toJson(true);
+		}
 	};
 
 }
