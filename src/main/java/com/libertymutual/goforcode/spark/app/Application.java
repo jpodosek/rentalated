@@ -112,14 +112,14 @@ public class Application {
     	get("/users/:id", UserController.details);	
     	
     	//Api Controllers ---------------------------
-    	path("/api",  () -> {
-        	post("/users", UserApiController.create);
-        	get("/users/:id", UserApiController.details);
+    	path("/api/users",  () -> {
+        	post("/createUser", UserApiController.createUser);
+        	get("/:id", UserApiController.details);
     	});
     	
-    	path("/api",  () -> {
-        	post("/sessions", SessionApiController.login);
-        	delete("/sessions/mine", SessionApiController.destroy); //mine is just for semantics, we aren't deleting everyones
+    	path("/api/sessions",  () -> {
+        	post("", SessionApiController.login);
+        	delete("/mine", SessionApiController.destroy); //mine is just for semantics, we aren't deleting everyones
     	});
     	
     	path("/api/apartments",  () -> {	

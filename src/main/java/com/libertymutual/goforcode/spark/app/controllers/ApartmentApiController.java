@@ -35,11 +35,17 @@ public class ApartmentApiController {
 	};
 
 	public static final Route create = (Request req, Response res) -> {
+		System.out.println("Apartment create route ran.");
 		Apartment apartment = new Apartment();
-		String apartmentJson = req.body();
-		apartment.fromMap(JsonHelper.toMap(apartmentJson));
-
+		apartment.fromMap(JsonHelper.toMap(req.body()));
+		User currentUser = req.session().attribute("currentUser");
+		
 		try (AutoCloseableDb db = new AutoCloseableDb()) {
+			System.out.println("apartmenting being saved in database: " + apartment);
+			System.out.println("current_User: " + currentUser);
+			System.out.println("current_User Id: " + currentUser.getId());
+			apartment.setBoolean("is_active", true);
+			currentUser.add(apartment); // associate apartment with the logged in user as its lister.
 			apartment.saveIt();
 			res.status(201);
 			return apartment.toJson(true);

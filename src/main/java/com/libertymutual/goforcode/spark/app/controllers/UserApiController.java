@@ -33,13 +33,16 @@ public class UserApiController {
 	};
 
 	// respond to post
-	public static final Route create = (Request req, Response res) -> {
+	public static final Route createUser = (Request req, Response res) -> {
+		System.out.println("create user route ran:");
 		User user = new User();
 		String userJson = req.body();
 		user.fromMap(JsonHelper.toMap(userJson));
 
 		try (AutoCloseableDb db = new AutoCloseableDb()) {
 			user.saveIt();
+			System.out.println("user is: " +user); 
+			req.session().attribute("currentUser", user); 
 			res.status(201);
 			return user.toJson(true);
 		}
