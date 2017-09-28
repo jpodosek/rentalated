@@ -15,21 +15,31 @@ import spark.Route;
 public class SessionApiController {
 	// respond to post
 	public static final Route login = (Request req, Response res) -> {
-			User jsonUser = new User();
-			jsonUser.fromMap(JsonHelper.toMap(req.body()));
-		
-			String email = jsonUser.getEmail();
-			String password = jsonUser.getPassword();
-			try (AutoCloseableDb db = new AutoCloseableDb()) {
-				
-			
+		User jsonUser = new User();
+		jsonUser.fromMap(JsonHelper.toMap(req.body()));
+
+		String email = jsonUser.getEmail();
+		String password = jsonUser.getPassword();
+		res.header("Content-type", "application/json");
+		try (AutoCloseableDb db = new AutoCloseableDb()) {
 			User user = User.findFirst("email = ?", email);
 			if (user != null && BCrypt.checkpw(password, user.getPassword())) {
-				res.header("Content-type", "application/json");
+				req.session().attribute("currentUser", user);
+				res.status(201); //created a new session
 				return user.toJson(true);
-			} 
-				notFound("User not found"); // sets hhtp status code to 404
-				return "";
 			}
-		};
+			res.status(200); //serve could process request, server could not handle it
+			return "{}";
+		}
+	};
+	
+	public static final Route destroy = (Request req, Response res)	-> {
+		req.session().removeAttribute("currentUser");
+		res.header("Content-Type", "application/json");
+		res.status(200);
+		return "{}";
+	};
+	
 }
+	
+	

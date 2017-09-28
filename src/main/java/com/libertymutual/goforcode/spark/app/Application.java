@@ -119,12 +119,19 @@ public class Application {
     	
     	path("/api",  () -> {
         	post("/sessions", SessionApiController.login);
+        	delete("/sessions/mine", SessionApiController.destroy); //mine is just for semantics, we aren't deleting everyones
     	});
     	
-    	path("/api",  () -> {
-    		get("/apartments", ApartmentApiController.index);
-	    	get("/apartments/:id", ApartmentApiController.details);
-	    	post("/apartments",ApartmentApiController.create);
+    	path("/api/apartments",  () -> {	
+    		System.out.println("code was here.");
+    		get("/mine", ApartmentApiController.myListings);	
+    		post("/:id/deactivations", ApartmentApiController.deactivate);
+	    	post("/:id/activations", ApartmentApiController.activate);
+	    	get("/:id", ApartmentApiController.details);
+	    	get("", ApartmentApiController.index);
+    		post("",ApartmentApiController.create);
+	    	
+	    	
     	});
     		
     }
